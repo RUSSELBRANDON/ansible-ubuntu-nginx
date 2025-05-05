@@ -1,0 +1,35 @@
+name: Déployer Nginx avec Ansible
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cloner le dépôt
+        uses: actions/checkout@v3
+
+      - name: Configurer SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Installer Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Installer Ansible
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install ansible
+
+      - name: Lancer le playbook Ansible
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: False
+        run: |
+          ansible-playbook playbooks/deploy_nginx.yml -i inventory/hosts.ini --private-key ~/.ssh/id_rsa -u ${{ secrets.ANSIBLE_USER }}

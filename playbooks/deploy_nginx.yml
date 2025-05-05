@@ -1,0 +1,28 @@
+- name: Installer et configurer Nginx
+  hosts: webservers
+  become: true
+  tasks:
+    - name: Mettre à jour le cache apt
+      apt:
+        update_cache: true
+    - name: Installer Nginx
+      apt:
+        name: nginx
+        state: present
+    - name: Démarrer Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: true
+    - name: Copier une page HTML personnalisée
+      copy:
+        dest: "/var/www/html/index.html"
+        content: |
+          <!DOCTYPE html>
+          <html>
+          <head><title>Bienvenue</title></head>
+          <body>
+          <h1>Serveur Nginx configuré par Ansible depuis GitHub Actions !</h1>
+          </body>
+          </html>
+        mode: '0644'
