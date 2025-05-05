@@ -3,7 +3,7 @@ name: Déployer Nginx avec Ansible
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   deploy:
